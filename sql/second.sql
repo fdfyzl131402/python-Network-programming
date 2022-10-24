@@ -228,3 +228,72 @@
 
 	--查询每种性别中人数大于两个的信息
 	select gender,group_concat(name) from students group by gender having count(*)>2;
+
+
+-- 分组
+	--limit start, count （起始的下标，查询的个数）
+
+	-- 限制查询出来的信息个数;
+	select * from students limit 2;
+
+	-- 查询前5个数据；
+	select * from students limit 0, 5;
+
+	-- 查询id6-10（包含）；
+	select * from students limit 5, 5;
+
+	--每页显示两个，第一个页面
+	select * from students limit 0, 2;
+
+	--每页显示两个，第二个页面
+	select * from students limit 2, 2;
+
+	--每页显示两个，第三个页面
+	select * from students limit 4, 2;
+
+	--每页显示两个，第四个页面
+	select * from students limit 6, 2; -------- limit (第N页-1)*每页的个数， 每页的个数；
+
+	-- 每页显示两个，显示第六页，按照年龄排序；（limit 要放在最后面）
+	-- 失败select * from students limit 2*(6-1), 2;
+	-- 失败select * from students limit 10, 2 order by age asc;
+	select * from students order by age asc limit 10, 2;
+
+	-- 查询所有的女性并且按身高从高到低，只显示两个
+	select * from students where gender=2 order by height desc limit 0, 2;
+
+
+-- 连接查询
+	-- inner join .. on;
+	--select ... from 表A inner join 表B;
+	select * from students inner join classes;
+
+	-- 查询能够对应学生和对应班级的信息;
+	select * from students inner join classes on students.cls_id=classes.id;
+
+	-- 按照要求显示姓名和班级；
+	-- select students.name, classes.name from students inner join classes on students.cls_id=classes.id;
+	-- 给数据表起名
+	select s.name, c.name from students as s inner join classes as c on s.cls_id=c.id;
+
+	--查询能够对应学生和对应班级的信息; 显示学生所有信息， 只显示班级名称；
+	select s.*, c.name from students as s inner join classes as c on s.cls_id=c.id;
+
+	-- 查询 有能够对应班级的学生以及班级信息，按班级进行排名
+	select c.name, s.* from students as s inner join classes as c on s.cls_id=c.id order by c.name;
+
+	--当同一个班级时，再按id从小到大排；
+	select c.name, s.* from students as s inner join classes as c on s.cls_id=c.id order by c.name,s.id;
+
+	-- left join 
+	-- 查询每位学生对应的班级信息
+	select c.*, s.* from students as s left join classes as c on s.cls_id=c.id;
+
+	-- 查询没有对应班级的学生；
+	-- select ... from xxx as x left join xxx as x on ... where ...;
+	-- select ... from xxx as x left join xxx as x on ... having ...;
+	select s.*, c.* from students as s left join classes as c on s.cls_id=c.id having c.id is null;
+
+
+	-- right join 
+	-- 将数据表名字互换位置，用左连接完成
